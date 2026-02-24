@@ -1,3 +1,14 @@
+#'Buffer GIS Tools
+#'\code(sig_buffer)
+#'
+#'@param capa_entrada
+#'@param distancia
+#'@param dissolve
+#'
+#'
+#'
+#'
+#'
 #'
 #'
 
