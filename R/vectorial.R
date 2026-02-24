@@ -1,45 +1,39 @@
-#'Buffer GIS Tools
-#'\code(sig_buffer)
+#' Buffer GIS tools
 #'
-#'@param capa_entrada
-#'@param distancia
-#'@param dissolve
-#'a
+#' \code{sig_buffer} devuelve la zona de influencia entorno a las geometrias de un shapefile
 #'
+#' @param capa_entrada un objeto de tipo vectorial de la clase sf
+#' @param distancia Distancia de vecindad para determinar la zona de influencia en m
+#' @param dissolve Parámetro para controlar la fusión de geometrias.
+#' @param campo Parámetro para fusionar por un atributo. Opcional.
 #'
+#' @return Un objeto vectorial de la case sfc_POLYGON
 #'
-#'
-#'
-#'
+#' @examples
+#' \dontrun
+#' sig_buffer(capa_entrada,1000)
+#' sig_buffer(capa_entrada,1000, dissolve = TRUE)
+#' sig_buffer(capa_entrada,1000, dissolve = TRUE, 'Especie')
 
-#Crear una versión de la herramienta buffer
 
-#la herramienta depende de los siguientes paquetes
-library(sf)
-library(dplyr)
+sig_buffer <- function(capa_entrada,distancia, dissolve = TRUE){
 
-# toma una capa vectorial de entrada
-# requiere de especificar una distancia de vecindad
-# Opciones:
-#  - Fusionar o no geometrías
-#  - Fusionar en función de un atributo
-#  - Mantener atributos en la capa resultante
-
-parcelas <- read_sf("C:/Users/AlumnoMaster/Desktop/Programacion/parcelas") |>
-  mutate(Especie=1)
-parcelas_buffer <- st_buffer(parcelas, dist=10000)|>
-  #group_by(Especie) |>
-  summarise(geometry = st_union(geometry))
-
-sig_buffer <- function(capa_entrada, distancia, dissolve=TRUE){
   if(dissolve==TRUE){
-    buffer <- st_buffer(capa_entrada, dist=distancia)|>
+    buffer <-st_buffer(capa_entrada, dist= distancia) |>
       summarise(geometry = st_union(geometry))
+
+    if(exists(campo)){
+      buffer <- st_buffer(capa_entrada, dist = distancia)|>
+        group_by({{campo}}) |>
+        summarise(geometry = st_union(geometry))
+    }
+
+
   }else{
-    buffer <- st_buffer(capa_entrada, dist =distancia)
+    buffer <- st_buffer(capa_entrada, dist= distancia)
   }
+
   return(buffer)
 }
 
-parcelas_buffer_function <-sig_buffer(parcelas, 5000, dissolve =FALSE)
-plot(parcelas_buffer_function)
+
