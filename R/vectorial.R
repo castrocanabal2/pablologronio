@@ -4,7 +4,7 @@
 #'@param capa_entrada
 #'@param distancia
 #'@param dissolve
-#'
+#'a
 #'
 #'
 #'
